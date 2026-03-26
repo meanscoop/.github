@@ -49,17 +49,17 @@ The core of the platform. Built on **Payload 3 + Next.js**. Defines all data mod
 
 ### [`meanscoop-cli`](https://github.com/meanscoop/meanscoop-cli) — CLI tooling
 
-**Go.** Command-line tool for managing the platform — interacting with agents, running tasks, managing Docker services, and orchestrating Flyte workflows.
+**Go.** Command-line tool for managing the platform — interacting with agents, running tasks, and managing Docker services.
 
-**Key areas:** `internal/agents`, `internal/tasks`, `internal/flyte`, `internal/docker`
+**Key areas:** `internal/agents`, `internal/tasks`, `internal/docker`
 
 ---
 
 ### [`stack`](https://github.com/meanscoop/stack) — Shared infrastructure + docs
 
-Shared deployment configs, Helm charts, Skaffold profiles, and cross-repo documentation. This is **not** where you run services locally — each service repo (`meanscoop-payload`, `ai-social-scrapers`) has its own Docker Compose for local dev. Stack is for shared infra concerns like Kafka cluster config, Flyte orchestration, Langfuse observability, and production deployment.
+Shared deployment configs, Helm charts, Skaffold profiles, and cross-repo documentation. This is **not** where you run services locally — each service repo (`meanscoop-payload`, `ai-social-scrapers`) has its own Docker Compose for local dev. Stack is for shared infra concerns like Kafka cluster config, Langfuse observability, and production deployment.
 
-**Key areas:** Helm charts, Skaffold profiles, shared Docker Compose (Kafka, Flyte, Langfuse, datalake), deployment scripts, cross-repo docs
+**Key areas:** Helm charts, Skaffold profiles, shared Docker Compose (Kafka, Langfuse, datalake), deployment scripts, cross-repo docs
 
 ## Tech stack
 
@@ -73,4 +73,4 @@ Shared deployment configs, Helm charts, Skaffold profiles, and cross-repo docume
 | Data | PostgreSQL, Redis, Kafka |
 | LLM | Llama 3.2 (local via Ollama) |
 | Observability | Langfuse |
-| Orchestration | Flyte |
+| Orchestration | App-owned queue/workers, DB-backed state |
