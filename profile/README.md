@@ -16,7 +16,7 @@ MeanScoop discovers and enriches local content from social media and public sour
 └──────────────┘    └──────────────────┘    └──────────────┘    └───────────┘
                            ▲                       ▲
                            │                       │
-                      CLI tooling            Stack (infra)
+                      CLI tooling         Shared infra + docs
 ```
 
 ## Navigating the repos
@@ -25,17 +25,17 @@ Start with whatever matches what you're working on:
 
 ### [`meanscoop-payload`](https://github.com/meanscoop/meanscoop-payload) — Backend API + CMS
 
-The core of the platform. Built on **Payload 3 + Next.js**. Defines all data models (businesses, events, deals, reviews, posts, users), handles auth, serves the REST/GraphQL API, and provides the admin panel. If you're adding a feature that touches data or business logic, start here.
+The core of the platform. Built on **Payload 3 + Next.js**. Defines all data models (businesses, events, deals, reviews, posts, users), handles auth, serves the REST/GraphQL API, and provides the admin panel. Includes its own Docker Compose setup for local development. If you're adding a feature that touches data or business logic, start here.
 
-**Key areas:** Collections (data models), hooks, access control, email/SMS queues, content moderation
+**Key areas:** Collections (data models), hooks, access control, email/SMS queues, content moderation, local Docker infra
 
 ---
 
 ### [`ai-social-scrapers`](https://github.com/meanscoop/ai-social-scrapers) — Content ingestion pipeline
 
-**Python.** Discovers content from Instagram, Reddit, TikTok, and web sources, then runs it through a multi-stage pipeline: LLM extraction (Ollama/Llama 3.2), embedding generation, geocoding, and quality scoring. Has a control plane for job routing and dead-letter handling, and a publisher service that deduplicates and pushes enriched content to the platform via Kafka.
+**Python.** Discovers content from Instagram, Reddit, TikTok, and web sources, then runs it through a multi-stage pipeline: LLM extraction (Ollama/Llama 3.2), embedding generation, geocoding, and quality scoring. Has a control plane for job routing and dead-letter handling, and a publisher service that deduplicates and pushes enriched content to the platform via Kafka. Includes its own Docker Compose setup for running agents and workers locally.
 
-**Key areas:** Platform-specific agents (`instagram-agent`, `reddit-activity-agent`, `tiktok-agent`), workers (embedder, geocoder, LLM extractor, quality scorer), publisher, control plane
+**Key areas:** Platform-specific agents (`instagram-agent`, `reddit-activity-agent`, `tiktok-agent`), workers (embedder, geocoder, LLM extractor, quality scorer), publisher, control plane, local Docker infra
 
 ---
 
@@ -55,11 +55,11 @@ The core of the platform. Built on **Payload 3 + Next.js**. Defines all data mod
 
 ---
 
-### [`stack`](https://github.com/meanscoop/stack) — Infrastructure
+### [`stack`](https://github.com/meanscoop/stack) — Shared infrastructure + docs
 
-Docker Compose configs and Helm charts for running the full platform locally or deploying it. Separate compose files for each concern: Payload, Kafka, agents, datalake, Langfuse (LLM observability), and Flyte (workflow orchestration).
+Shared deployment configs, Helm charts, Skaffold profiles, and cross-repo documentation. This is **not** where you run services locally — each service repo (`meanscoop-payload`, `ai-social-scrapers`) has its own Docker Compose for local dev. Stack is for shared infra concerns like Kafka cluster config, Flyte orchestration, Langfuse observability, and production deployment.
 
-**Key areas:** `docker/docker-compose.*.yml`, `skaffold.yaml`, deployment scripts
+**Key areas:** Helm charts, Skaffold profiles, shared Docker Compose (Kafka, Flyte, Langfuse, datalake), deployment scripts, cross-repo docs
 
 ## Tech stack
 
