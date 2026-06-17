@@ -1,23 +1,65 @@
 # MeanScoop
 
-> Local discovery platform — events, businesses, deals, and community content powered by AI ingestion
+MeanScoop discovers what's happening in a city by continuously monitoring Instagram, TikTok, Reddit,
+and other local sources, and converts that local demand signal into structured **Events,
+Activities, Deals, and Businesses** published to a Next.js/Payload site.
 
-## How the platform works
+MeanScoop is **demand-routing infrastructure** — an empty feed is a signal to fix the scrapers, never
+a reason to seed data.
 
-MeanScoop discovers and enriches local content from social media and public sources, runs it through AI extraction and quality scoring, and surfaces it to users through a mobile app. Businesses get tools for promotions, loyalty programs, and analytics.
+The repo is a stack of two submodules plus shared infra: **`meanscoop-payload/`** (Next.js 15 +
+Payload CMS, the app + ingest worker), **`ai-social-scrapers/`** (python agents + control-plane +
+url-extract sidecar), and **`docs/`**.
+
+## Who are you?
+
+Find your role and go straight to your docs.
+
+### I'm on the Revenue Team
+
+You help local businesses get discovered and onboarded — sales, activation, partnerships.
+
+→ **[docs/revenue/](https://github.com/meanscoop/stack/blob/main/docs/revenue/README.md)** — what we sell, pricing & packaging, the sales
+playbook, onboarding, and compensation.
+
+### I'm a Developer
+
+You build and maintain the platform.
+
+→ **[docs/engineering/](https://github.com/meanscoop/stack/blob/main/docs/engineering/README.md)** — getting started, architecture, operations,
+runbooks, and the runtime/queue contracts. Quick-start: [getting started](https://github.com/meanscoop/stack/blob/main/docs/engineering/getting-started.md).
+
+### I'm a Market Operator
+
+You grow a city by finding sources and feeding the system.
+
+→ **[docs/market-ops/](https://github.com/meanscoop/stack/blob/main/docs/market-ops/README.md)** — source discovery, manifests, the ingestion
+guide, coverage/quality, and nightly runs.
+
+Not sure? The full index is [`docs/`](https://github.com/meanscoop/stack/blob/main/docs/README.md).
+
+## The one job
 
 ```
-  Social sources          AI pipeline            Platform             Users
-┌──────────────┐    ┌──────────────────┐    ┌──────────────┐    ┌───────────┐
-│  Instagram   │    │  Discovery       │    │  Payload CMS │    │  Mobile   │
-│  Reddit      │───▶│  LLM Extraction  │───▶│  API + Admin │───▶│  App      │
-│  TikTok      │    │  Embeddings      │    │  Kafka pub   │    │  (Expo)   │
-│  Web         │    │  Quality scoring │    │              │    │           │
-└──────────────┘    └──────────────────┘    └──────────────┘    └───────────┘
-                           ▲                       ▲
-                           │                       │
-                      CLI tooling         Shared infra + docs
+Discover → Extract → Score → Review → Promote
 ```
+
+Everything exists to improve one of those stages. Never seed fake content — an empty feed means fix
+the scrapers.
+
+## Run it now
+
+Day-to-day dev runs the whole compose stack from the canonical `docker-compose.dev.yml`:
+
+```bash
+./run.sh start      # start everything (Payload :3011, control-plane :8000, Kafka UI :8086)
+./run.sh status     # show running services + ports
+./run.sh logs payload   # tail one service
+```
+
+App-only (no Docker): `cd meanscoop-payload && pnpm dev` → <http://localhost:3011>. Full setup,
+per-stack control, and runtime verification live in
+[Getting Started](https://github.com/meanscoop/stack/blob/main/docs/engineering/getting-started.md).
 
 ## Navigating the repos
 
@@ -60,17 +102,3 @@ The core of the platform. Built on **Payload 3 + Next.js**. Defines all data mod
 Shared deployment configs, Helm charts, Skaffold profiles, and cross-repo documentation. This is **not** where you run services locally — each service repo (`meanscoop-payload`, `ai-social-scrapers`) has its own Docker Compose for local dev. Stack is for shared infra concerns like Kafka cluster config, Langfuse observability, and production deployment.
 
 **Key areas:** Helm charts, Skaffold profiles, shared Docker Compose (Kafka, Langfuse, datalake), deployment scripts, cross-repo docs
-
-## Tech stack
-
-| Layer | Tech |
-|---|---|
-| Mobile | React Native, Expo |
-| Backend / CMS | Payload 3, Next.js |
-| Ingestion | Python, Ollama, Kafka |
-| CLI | Go |
-| Infra | Docker Compose, Skaffold, Helm |
-| Data | PostgreSQL, Redis, Kafka |
-| LLM | Llama 3.2 (local via Ollama) |
-| Observability | Langfuse |
-| Orchestration | App-owned queue/workers, DB-backed state |
